@@ -1,5 +1,5 @@
 # check the input text, inspect the quality
-with open('input.txt', 'r', encoding = 'utf-8') as f:
+with open('./GPT Series/input.txt', 'r', encoding = 'utf-8') as f:
     text = f.read()
 
 # print first 100 characters

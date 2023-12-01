@@ -16,7 +16,7 @@ eval_iters = 200
 
 #----------------------------- Loading Data ---------------------------------#
 # check the input text, inspect the quality
-with open('input.txt', 'r', encoding = 'utf-8') as f:
+with open('./GPT Series/input.txt', 'r', encoding = 'utf-8') as f:
     text = f.read()
 
 #------------------ Characterization and Vocabulary -------------------------#
