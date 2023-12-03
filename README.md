@@ -242,8 +242,8 @@ The `SelfAttention` class represents a fundamental building block of the Transfo
 <br>
 
 # Step 6: Transitioning to Multi-Head Self-Attention
-**MultiHeadAttention**: Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class. The MultiHeadAttention class is an extended implementation of the self-attention mechanism with one head from previous step, but now multiple attention heads operate in parallel, each focusing on different parts of the input. 
-- 
+**MultiHeadAttention**:Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class. The MultiHeadAttention class is an extended implementation of the self-attention mechanism with one head from previous step, but now multiple attention heads operate in parallel, each focusing on different parts of the input. 
+
 ```python
 
 class MultiHeadAttention(nn.Module):
