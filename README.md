@@ -116,7 +116,7 @@ def get_batch(split):
 The ```estimate_loss``` function calculates the average loss for the model over a specified number of iterations (eval_iters). It's used to assess the model's performance without affecting its parameters. The model is set to evaluation mode to disable certain layers like dropout for a consistent loss calculation. After computing the average loss for both training and validation data, the model is reverted to training mode. This function is essential for monitoring the training process and making adjustments if necessary.
 
 
-```
+```python
 @torch.no_grad()  # Disables gradient calculation to save memory and computations
 def estimate_loss():
     result = {}  # Dictionary to store the results
@@ -145,12 +145,36 @@ def estimate_loss():
 
 ## Step 3: Adding Positional Encodings
 - **PosEncoding**: Adding positional information to the model with the `positional_encodings_table` in the `BigramLM` class.
+We add Positional Encodings to the embeddings of our characters as in the transformer architecture.
+
+## Step 4: Incorporating Adam W Optimizer
+Here we set up and use the AdamW optimizer for training a neural network model in PyTorch. The Adam optimizer is favored in many deep learning scenarios because it combines the advantages of two other extensions of stochastic gradient descent: AdaGrad and RMSProp. Adam computes adaptive learning rates for each parameter. In addition to storing an exponentially decaying average of past squared gradients like RMSProp, Adam also keeps an exponentially decaying average of past gradients, similar to momentum. This enables the optimizer to adjust the learning rate for each weight of the neural network, which can lead to more effective training on complex datasets and architectures.
 
 
+```AdamW``` modifies the way weight decay is incorporated into the optimization process, addressing an issue with the original Adam optimizer where the weight decay is not well separated from the gradient updates, leading to suboptimal application of regularization. Using AdamW can sometimes result in better training performance and generalization to unseen data.
 
-## Step 4: Incorporating Adam Optimizer
-- **AdamOptimization**: Initializing the Adam optimizer with `torch.optim.AdamW(model.parameters(), lr = lr_rate)`.
+```python
 
+optimizer = torch.optim.AdamW(model.parameters(), lr = lr_rate)
+for iter in range(num_iter):
+    # estimating the loss for per X interval
+    if iter % eval_interval == 0:
+       losses = estimate_loss()
+       print(f"step {iter}: train loss is {losses['train']:.5f} and validation loss is {losses['valid_date']:.5f}")
+    
+    # sampling a mini batch of data
+    xb, yb = get_batch("train")
+
+    # Forward Pass 
+    logits, loss = model(xb, yb)
+    # Zeroing Gradients: Before computing the gradients, existing gradients are reset to zero. This is necessary because gradients accumulate by default in PyTorch.
+    optimizer.zero_grad(set_to_none=True)
+    # Backward Pass or Backpropogation: Computing Gradients
+    loss.backward()
+    # Updating the Model Parameters
+    optimizer.step()
+    #printing the Loss
+```
 
 
 
