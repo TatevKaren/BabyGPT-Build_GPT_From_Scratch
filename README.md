@@ -271,8 +271,26 @@ class MultiHeadAttention(nn.Module):
 ```
 
 ## Step 7: Adding Feed-Forward Networks
-- **FeedForward**: Implementing a feed-forward neural network with ReLU activation within the `FeedForward` class.
+- **FeedForward**: Implementing feed-forward neural network with ReLU activation within the `FeedForward` class. To add this fully connected feed-forward to our model as in original Transformer Model.
+  
+```python
+class FeedForward(nn.Module):
+    """FeedForward Layer with ReLU activation function"""
 
+    def __init__(self, d_model):
+        super().__init__()
+        self.net = nn.Sequential(
+            # 2 linear layers with ReLU activation function
+            nn.Linear(d_model, 4*d_model),
+            nn.ReLU(),
+            nn.Linear(4*d_model, d_model),
+            nn.Dropout(dropout_rate)
+        )
+    def forward(self, X):
+        # applying the feedforward layer
+        
+        return self.net(X)
+```
   
 
 ## Step 8: Formulating Blocks (Nx Layer)
