@@ -154,33 +154,7 @@ We add Positional Encodings to the embeddings of our characters as in the transf
 Here we set up and use the AdamW optimizer for training a neural network model in PyTorch. The Adam optimizer is favored in many deep learning scenarios because it combines the advantages of two other extensions of stochastic gradient descent: AdaGrad and RMSProp. Adam computes adaptive learning rates for each parameter. In addition to storing an exponentially decaying average of past squared gradients like RMSProp, Adam also keeps an exponentially decaying average of past gradients, similar to momentum. This enables the optimizer to adjust the learning rate for each weight of the neural network, which can lead to more effective training on complex datasets and architectures.
 
 
-```AdamW``` modifies the way weight decay is incorporated into the optimization process, addressing an issue with the original Adam optimizer where the weight decay is not well separated from the gradient updates, leading to suboptimal application of regularization. Using AdamW can sometimes result in better training performance and generalization to unseen data.
-
-
-## Model Training Steps with AdamW Optimizer
-
-### Step 4.1: Initialize AdamW Optimizer
-The AdamW optimizer is initialized with the model's parameters and a specific learning rate. This optimizer adjusts the model's parameters to minimize the loss function, with an improved approach to weight decay regularization.
-
-### Step 4.2: Training Loop
-The training process iterates over a set number of iterations. During each iteration, the model's parameters are updated to reduce the loss, thereby improving the model's predictive performance.
-
-### Step 4.3: Loss Estimation
-At regular intervals defined by `eval_interval`, the model's training loss is estimated. This is an essential step to monitor and ensure the model is learning as expected.
-
-### Step 4.4: Data Sampling
-Mini-batches of data are retrieved for training using the `get_batch` function. Training with mini-batches allows for more frequent parameter updates, which can lead to quicker and more efficient convergence.
-
-### Step 4.5: Forward Pass
-During the forward pass, the model processes the input data to generate predictions and calculate the loss. This step evaluates how well the model's predictions align with the actual target values.
-
-### Step 4.6: Backpropagation
-Before the backpropagation step, existing gradients are reset to zero. The gradients of the loss with respect to the model's parameters are then computed, preparing for the model's parameter updates.
-
-### Step 4.7: Update Model Parameters
-The computed gradients are applied to the model's parameters, updating them according to the AdamW optimizer's rules. This step is crucial for the learning process, leading to a model that better fits the training data.
-
-AdamW is chosen for its ability to handle weight decay more effectively than the standard Adam optimizer, potentially leading to improved model training and generalization.
+```AdamW``` modifies the way weight decay is incorporated into the optimization process, addressing an issue with the original Adam optimizer where the weight decay is not well separated from the gradient updates, leading to suboptimal application of regularization. Using AdamW can sometimes result in better training performance and generalization to unseen data. We chose AdamW for its ability to handle weight decay more effectively than the standard Adam optimizer, potentially leading to improved model training and generalization.
 
 
 ```python
@@ -271,6 +245,7 @@ The `SelfAttention` class represents a fundamental building block of the Transfo
 - **MultiHeadAttention**: Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class. The MultiHeadAttention class is an extended implementation of the self-attention mechanism with one head from previous step, but now multiple attention heads operate in parallel, each focusing on different parts of the input. 
 - 
 ```python
+
 class MultiHeadAttention(nn.Module):
     """Multi Head Self Attention"""
     """h: #heads"""
@@ -278,11 +253,20 @@ class MultiHeadAttention(nn.Module):
         super().__init__()
         # initializing the heads, we want h times attention heads wit size d_k
         self.heads = nn.ModuleList([SelfAttention(d_k) for _ in range(h)])
+        # adding linear layer to project the concatenated heads to the original dimension
+        self.projections = nn.Linear(h*d_k, d_model)
+        # adding dropout layer
+        self.droupout = nn.Dropout(dropout_rate)
     
     def forward(self, X):
         # running multiple self attention heads in parallel and concatinate them at channel dimension
         combined_attentions = torch.cat([h(X) for h in self.heads], dim = -1)
+        # projecting the concatenated heads to the original dimension
+        combined_attentions = self.projections(combined_attentions)
+        # applying dropout
+        combined_attentions = self.droupout(combined_attentions)
         return combined_attentions
+    
     
 ```
 
