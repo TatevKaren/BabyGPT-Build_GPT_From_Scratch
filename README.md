@@ -159,28 +159,27 @@ Here we set up and use the AdamW optimizer for training a neural network model i
 
 ## Model Training Steps with AdamW Optimizer
 
-### Step 1: Initialize AdamW Optimizer
+### Step 4.1: Initialize AdamW Optimizer
 The AdamW optimizer is initialized with the model's parameters and a specific learning rate. This optimizer adjusts the model's parameters to minimize the loss function, with an improved approach to weight decay regularization.
 
-### Step 2: Training Loop
+### Step 4.2: Training Loop
 The training process iterates over a set number of iterations. During each iteration, the model's parameters are updated to reduce the loss, thereby improving the model's predictive performance.
 
-### Step 3: Loss Estimation
+### Step 4.3: Loss Estimation
 At regular intervals defined by `eval_interval`, the model's training loss is estimated. This is an essential step to monitor and ensure the model is learning as expected.
 
-### Step 4: Data Sampling
+### Step 4.4: Data Sampling
 Mini-batches of data are retrieved for training using the `get_batch` function. Training with mini-batches allows for more frequent parameter updates, which can lead to quicker and more efficient convergence.
 
-### Step 5: Forward Pass
+### Step 4.5: Forward Pass
 During the forward pass, the model processes the input data to generate predictions and calculate the loss. This step evaluates how well the model's predictions align with the actual target values.
 
-### Step 6: Backpropagation
+### Step 4.6: Backpropagation
 Before the backpropagation step, existing gradients are reset to zero. The gradients of the loss with respect to the model's parameters are then computed, preparing for the model's parameter updates.
 
-### Step 7: Update Model Parameters
+### Step 4.7: Update Model Parameters
 The computed gradients are applied to the model's parameters, updating them according to the AdamW optimizer's rules. This step is crucial for the learning process, leading to a model that better fits the training data.
 
-### Conclusion
 AdamW is chosen for its ability to handle weight decay more effectively than the standard Adam optimizer, potentially leading to improved model training and generalization.
 
 
@@ -210,9 +209,77 @@ for iter in range(num_iter):
 
 
 # Step 5: Introducing Self-Attention
-- **Dot-Product**
-- **Scaled Dot-Product**
-- **OneHeadSelfAttention**: Incorporating a scaled dot product attention mechanism in the `SelfAttention` class.
+
+Self-Attention is a mechanism that allows the model to weigh the importance of different parts of the input data differently. It is a key component of the Transformer architecture, enabling the model to focus on relevant parts of the input sequence for making predictions.
+
+- **Dot-Product Attention**: A simple attention mechanism that computes a weighted sum of values based on the dot product between queries and keys.
+  
+- **Scaled Dot-Product Attention**: An improvement over the dot-product attention that scales down the dot products by the dimensionality of the keys, preventing gradients from becoming too small during training.
+
+- **OneHeadSelfAttention**: Implementation of a single-headed self-attention mechanism that allows the model to attend to different positions of the input sequence. The `SelfAttention` class showcases the intuition behind the attention mechanism and its scaled version.
+
+Each corresponding model in the Baby GPT project incrementally builds upon the previous one, starting with the intuition behind the Self-Attention mechanism, followed by practical implementations of dot-product and scaled dot-product attentions, and culminating in the integration of a one-head self-attention module.
+
+
+```python
+class SelfAttention(nn.Module):
+    """Self Attention (One Head)"""
+    """ d_k = C """
+    def __init__(self, d_k):
+        super().__init__() #superclass initialization for proper torch functionality
+        # keys 
+        self.keys = nn.Linear(d_model, d_k, bias = False)
+        # queries
+        self.queries = nn.Linear(d_model, d_k, bias = False)
+        # values
+        self.values = nn.Linear(d_model, d_k, bias = False)
+        # buffer for the model
+        self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
+
+    def forward(self, X):
+        """Computing Attention Matrix"""
+        B, T, C = X.shape
+        # Keys matrix K
+        K = self.keys(X) # (B, T, C)
+        # Query matrix Q
+        Q = self.queries(X) # (B, T, C)
+        # Scaled Dot Product
+        scaled_dot_product = Q @ K.transpose(-2,-1) * 1/math.sqrt(C) # (B, T, T)
+        # Masking upper triangle
+        scaled_dot_product_masked = scaled_dot_product.masked_fill(self.tril[:T, :T]==0, float('-inf'))
+        # SoftMax transformation
+        attention_matrix = F.softmax(scaled_dot_product_masked, dim=-1) # (B, T, T)
+        # Weighted Aggregation
+        V = self.values(X) # (B, T, C)
+        output =  attention_matrix @ V # (B, T, C)
+        retur
+```
+
+
+
+The `SelfAttention` class represents a fundamental building block of the Transformer model, encapsulating the self-attention mechanism with a single head. Here's an insight into its components and processes:
+
+- **Initialization**: The constructor `__init__(self, d_k)` initializes the linear layers for keys, queries, and values, all with the dimensionality `d_k`. These linear transformations project the input into different subspaces for subsequent attention calculations.
+
+- **Buffers**: `self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))` registers a lower triangular matrix as a persistent buffer that is not considered a model parameter. This matrix is used for masking in the attention mechanism to prevent future positions from being considered in each calculation step (useful in decoder self-attention).
+
+- **Forward Pass**: The `forward(self, X)` method defines the computation performed at every call of the self-attention module:
+  
+  - `B, T, C = X.shape` extracts the batch size (`B`), sequence length (`T`), and channel/feature size (`C`) from the input tensor `X`.
+  
+  - The input `X` is passed through the keys, queries, and values linear layers to produce the respective matrices `K`, `Q`, and `V`.
+  
+  - The scaled dot product attention is calculated by taking the dot product of queries `Q` with keys `K`, scaling by the square root of the feature size to control the gradients' scale.
+  
+  - The `scaled_dot_product` is then masked using the registered lower triangular matrix to ensure the self-attention is only applied to the appropriate sequence positions.
+  
+  - A softmax function is applied to the masked scaled dot product, yielding an attention matrix that represents the probability distribution of attention across different positions.
+  
+  - The final output is computed by multiplying the attention matrix with the values matrix `V`, resulting in a weighted representation of the input that incorporates information from different positions in the sequence based on their computed relevancy.
+
+By understanding each component and its role within the `SelfAttention` class, we gain insight into how self-attention mechanisms contribute to the powerful and flexible modeling capabilities of Transformer-based architectures.
+
+
 
 <br>
 
