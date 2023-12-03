@@ -48,5 +48,13 @@ Baby GPT is an exploratory project designed to incrementally build a GPT-like la
 2. **LayerNorm Class**: Creating a `LayerNorm` class with parameters epsilon, gamma, and beta to calculate and apply normalization on a layer-by-layer basis.
 3. **Optimization via Normalization**: Discussing how adding layer normalization at various points in the model aids in optimization by normalizing the output of each layer before it passes to the next.
 
+## Step 11: Implementing Dropout
+1. **Purpose of Dropout**: Introducing dropout as a regularization technique to prevent overfitting by randomly deactivating a subset of neurons during training, thus forcing the model to learn more robust features.
+2. **Application in the Model**: Detailed instructions on integrating dropout layers in the transformer blocks, particularly after attention and before feed-forward layers, to generalize learning and avoid over-reliance on specific features or patterns.
 
-Each of these steps should be accompanied by the relevant code snippets and detailed explanations to provide clarity and guidance on how to implement each part of the model. Further steps will be detailed as the model development progresses.
+## Step 12: Scaling the Model
+1. **Benefits of Scaling**: Explaining the motivation behind scaling up the model, which includes increased capacity for learning complex patterns and relationships in data.
+2. **Increased Dimensions**: Guidance on increasing the batch size, block size, and dimensionality of the model, which involves more features per attention head and more layers.
+3. **Deep Network Construction**: Discussing the implications of a deeper network with more parameters, and how this affects training time, resource requirements, and potential for capturing nuanced language structures.
+4. **Considerations for Larger Models**: Providing considerations for hardware requirements and optimization techniques to efficiently train larger models without sacrificing performance or encountering hardware limitations.
+
