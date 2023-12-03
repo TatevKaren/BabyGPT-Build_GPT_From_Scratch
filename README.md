@@ -371,8 +371,12 @@ class LayerNorm:
 
 
 
-## Step 11: Implementing Dropout
-- **Dropout**: To be added to the `SelfAttention` and `FeedForward` layers as a regularization method to prevent overfitting.
+# Step 11: Implementing Dropout
+**Dropout**: To be added to the `SelfAttention` and `FeedForward` layers as a regularization method to prevent overfitting. We add drop-out to:
+- Self Attention Class
+- Multi-Head Self Attention
+- FeedForward 
+  
 
 ## Step 12: Scaling the Model
 - **ScaleUp**: Increasing the complexity of the model by expanding `batch_size`, `block_size`, `d_model`, `d_k`, and `Nx`.
