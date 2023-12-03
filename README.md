@@ -30,6 +30,9 @@ These hyperparameters were carefully chosen to balance the model's ability to le
 <br>
 
 
+## Decoder Only for GPT
+
+
 ## CPU vs GPU Model Example
 
 
