@@ -268,7 +268,7 @@ The `SelfAttention` class represents a fundamental building block of the Transfo
 <br>
 
 ## Step 6: Transitioning to Multi-Head Self-Attention
-- **MultiHeadAttention**: Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class.
+- **MultiHeadAttention**: Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class. The MultiHeadAttention class is an extended implementation of the self-attention mechanism with one head from previous step, but now multiple attention heads operate in parallel, each focusing on different parts of the input. 
 - 
 ```python
 class MultiHeadAttention(nn.Module):
@@ -288,6 +288,8 @@ class MultiHeadAttention(nn.Module):
 
 ## Step 7: Adding Feed-Forward Networks
 - **FeedForward**: Implementing a feed-forward neural network with ReLU activation within the `FeedForward` class.
+
+  
 
 ## Step 8: Formulating Blocks (Nx Layer)
 - **TransformerBlocks**: Stacking transformer blocks using the `Block` class to create a deeper network architecture.
