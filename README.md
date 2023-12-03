@@ -109,11 +109,49 @@ def get_batch(split):
 
 
 
+
+## Estimating Loss (Negative Loss Likelihood or Cross Entropy)
+
+The ```estimate_loss``` function calculates the average loss for the model over a specified number of iterations (eval_iters). It's used to assess the model's performance without affecting its parameters. The model is set to evaluation mode to disable certain layers like dropout for a consistent loss calculation. After computing the average loss for both training and validation data, the model is reverted to training mode. This function is essential for monitoring the training process and making adjustments if necessary.
+
+
+```
+@torch.no_grad()  # Disables gradient calculation to save memory and computations
+def estimate_loss():
+    result = {}  # Dictionary to store the results
+    model.eval()  # Puts the model in evaluation mode
+
+    # Iterates over the data splits (training and validation)
+    for split in ['train', 'valid_date']:
+        # Initializes a tensor to store the losses for each iteration
+        losses = torch.zeros(eval_iters)
+
+        # Loops over the number of iterations to calculate the average loss
+        for e in range(eval_iters):
+            X, Y = get_batch(split)  # Fetches a batch of data
+            logits, loss = model(X, Y)  # Gets the model outputs and computes the loss
+            losses[e] = loss.item()  # Records the loss for this iteration
+
+        # Stores the mean loss for the current split in the result dictionary
+        result[split] = losses.mean()
+
+    model.train()  # Sets the model back to training mode
+    return result  # Returns the dictionary with the computed losses
+```
+
+
+
+
 ## Step 3: Adding Positional Encodings
 - **PosEncoding**: Adding positional information to the model with the `positional_encodings_table` in the `BigramLM` class.
 
+
+
 ## Step 4: Incorporating Adam Optimizer
 - **AdamOptimization**: Initializing the Adam optimizer with `torch.optim.AdamW(model.parameters(), lr = lr_rate)`.
+
+
+
 
 ## Step 5: Introducing Self-Attention
 - **OneHeadSelfAttention**: Incorporating a scaled dot product attention mechanism in the `SelfAttention` class.
