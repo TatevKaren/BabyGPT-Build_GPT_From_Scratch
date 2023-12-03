@@ -27,6 +27,9 @@ The model's performance is tuned using the following hyperparameters:
 
 These hyperparameters were carefully chosen to balance the model's ability to learn from the data without overfitting and to manage computational resources effectively.
 
+<br>
+
+
 ## CPU vs GPU Model Example
 
 
@@ -52,16 +55,38 @@ These hyperparameters were carefully chosen to balance the model's ability to le
 
 
 
-## Step 1: Data Preparation
+# Step 1: Data Preparation Including Tokenization
 - **LoadData**: `open('./GPT Series/input.txt', 'r', encoding = 'utf-8')`
 - **BuildVocab**: Creating a vocabulary dictionary with `chars_to_int` and `int_to_chars`.
 - **CharacterTokenization**: Converting strings to integers with the `encode` function and back with the `decode` function.
 - **DataSplit**: Dividing the dataset into training (`train_data`) and validation (`valid_data`) sets.
 
-## Step 2: Building a Simple Bigram Language Model (Initial Model)
-- **Batching**: The `get_batch` function prepares data in mini-batches for training.
+
+
+# Step 2: Building a Simple Bigram Language Model (Initial Model)
+- **Mini Batch**: The `get_batch` function prepares data in mini-batches for training.
 - **BigramModel**: Defines the model architecture in the `BigramLM` class.
 - **TrainModel**: Outlines the training procedure using the Adam optimizer and loss estimation.
+
+## Mini Batch Technique
+``` # Function to create mini-batches for training or validation.
+def get_batch(split):
+    # Select data based on training or validation split.
+    data = train_data if split == "train" else valid_data
+
+    # Generate random start indices for data blocks, ensuring space for 'block_size' elements.
+    ix = torch.randint(len(data)-block_size, (batch_size,))
+
+    # Create input (x) and target (y) sequences from data blocks.
+    x = torch.stack([data[i:i+block_size] for i in ix])
+    y = torch.stack([data[i+1:i+block_size+1] for i in ix])
+
+    # Move data to GPU if available for faster processing.
+    x, y = x.to(device), y.to(device)
+
+    return x, y
+```
+
 
 ## Step 3: Adding Positional Encodings
 - **PosEncoding**: Adding positional information to the model with the `positional_encodings_table` in the `BigramLM` class.
