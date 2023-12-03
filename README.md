@@ -192,6 +192,9 @@ Self-Attention is a mechanism that allows the model to weigh the importance of d
 
 - **OneHeadSelfAttention**: Implementation of a single-headed self-attention mechanism that allows the model to attend to different positions of the input sequence. The `SelfAttention` class showcases the intuition behind the attention mechanism and its scaled version.
 
+![Transformer Model Architecture](./GPT%20Series/Images/AttentionMechanism.png)
+
+
 Each corresponding model in the Baby GPT project incrementally builds upon the previous one, starting with the intuition behind the Self-Attention mechanism, followed by practical implementations of dot-product and scaled dot-product attentions, and culminating in the integration of a one-head self-attention module.
 
 
