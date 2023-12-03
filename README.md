@@ -48,6 +48,9 @@ These hyperparameters were carefully chosen to balance the model's ability to le
 
 
 
+<br>
+
+
 
 ## Step 1: Data Preparation
 - **LoadData**: `open('./GPT Series/input.txt', 'r', encoding = 'utf-8')`
