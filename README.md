@@ -346,6 +346,9 @@ Residual Connections, also known as skip connections, are a critical innovation 
 # Step 10: Incorporating Layer Normalization
 **LayerNorm**: Adding Layer Normalization to our Transformer.Normalizing layer outputs with `nn.LayerNorm(d_model)` in the `Block` class.
 
+![Transformer Model Architecture](./GPT%20Series/Images/LayerNormalization.png)
+
+
 ```python
 class LayerNorm:
     def __init__(self, dim, eps=1e-5):
