@@ -146,8 +146,7 @@ class FeedForward(nn.Module):
     def forward(self, X):
         return self.net(X)
     
-
-# ---------------------------------- Blocks ----------------------------------#
+#------------------------------------------- Blocks -----------------------------------------------#
 class Block(nn.Module):
     """Multiple Blocks of Transformer"""
     def __init__(self, d_model, h):
@@ -157,35 +156,13 @@ class Block(nn.Module):
         self.attention_head = MultiHeadAttention(h, d_k) # h heads of d_k dimensional self-attention
         # Layer 5: Feed Forward layer
         self.feedforward = FeedForward(d_model)
-        # Layer Normalization 1
-        self.ln1 = nn.LayerNorm(d_model)
-        # Layer Normalization 2
-        self.ln2 = nn.LayerNorm(d_model)
+        
     
-    # Adding additional X for Residual Connections
     def forward(self,X):
-        X = X + self.attention_head(self.ln1(X))
-        X = X + self.feedforward(self.ln2(X))
+        X = X + self.attention_head(X)
+        X = X + self.feedforward(X)
         return X
-
-class LayerNorm:
-    def __init__(self, dim, eps=1e-5):
-        self.eps = eps
-        self.gamma = torch.ones(dim)
-        self.beta = torch.zeros(dim)
-
-    def __call__(self, x):
-        # orward pass calculaton
-        xmean = x.mean(1, keepdim=True)  # layer mean
-        xvar = x.var(1, keepdim=True)  # layer variance
-        xhat = (x - xmean) / torch.sqrt(xvar + self.eps)  # normalize to unit variance
-        self.out = self.gamma * xhat + self.beta      
-        return self.out
     
-    def parameters(self):
-        return [self.gamma, self.beta]
-
-
 #------------------------------------------- BiGram -----------------------------------------------#
 class BigramLM(nn.Module):
 
@@ -301,3 +278,155 @@ for iter in range(num_iter):
 
 context = torch.zeros((1, 1), dtype=torch.long, device = device)
 print(decode(model.generate(context, max_new_tokens=500)[0].tolist()))
+
+#---------------------------------- Layer Normalization ----------------------------------#
+class LayerNorm:
+    def __init__(self, dim, eps=1e-5):
+        self.eps = eps
+        self.gamma = torch.ones(dim)
+        self.beta = torch.zeros(dim)
+
+    def __call__(self, x):
+        # orward pass calculaton
+        xmean = x.mean(1, keepdim=True)  # layer mean
+        xvar = x.var(1, keepdim=True)  # layer variance
+        xhat = (x - xmean) / torch.sqrt(xvar + self.eps)  # normalize to unit variance
+        self.out = self.gamma * xhat + self.beta      
+        return self.out
+    
+    def parameters(self):
+        return [self.gamma, self.beta]
+
+
+# ---------------------------------- Blocks ----------------------------------#
+class Block(nn.Module):
+    """Multiple Blocks of Transformer"""
+    def __init__(self, d_model, h):
+        super().__init__()
+        d_k = d_model // h
+        # Layer 4: Adding Attention layer
+        self.attention_head = MultiHeadAttention(h, d_k) # h heads of d_k dimensional self-attention
+        # Layer 5: Feed Forward layer
+        self.feedforward = FeedForward(d_model)
+        # Layer Normalization 1
+        self.ln1 = nn.LayerNorm(d_model)
+        # Layer Normalization 2
+        self.ln2 = nn.LayerNorm(d_model)
+    
+    # Adding additional X for Residual Connections
+    def forward(self,X):
+        X = X + self.attention_head(self.ln1(X))
+        X = X + self.feedforward(self.ln2(X))
+        return X
+
+# ---------------------------------- Bigram Model ----------------------------------#
+class BigramLM(nn.Module):
+
+    def __init__(self):
+        super().__init__()
+        # Layer 1: Embedding Layer (embedding is of size vocab by d_model)
+        self.token_embedding_table = nn.Embedding(vocab_size, d_model)
+        # Layer 2: Adding Position Encoding Layer
+        self.positional_encodings_table = nn.Embedding(block_size, d_model)
+        # Repeating Multi Head Self Attention in sequential manner (Nx = 6 Blocks )
+        self.blocks = nn.Sequential(
+            Block(d_model, h = 4),
+            Block(d_model, h = 4),
+            Block(d_model, h = 4),
+            #adding one to the blocks
+            nn.LayerNorm(d_model),
+        ) 
+        # Adding Final Linear layer 
+        self.lin_layer = nn.Linear(d_model, vocab_size) 
+
+
+    def forward(self, idx, targets=None):    
+        B, T = idx.shape
+        # embedded space
+        tok_embeddings = self.token_embedding_table(idx) # (B,T,C)
+        # positional encoding
+        pos_encodings = self.positional_encodings_table(torch.arange(T, device=device)) # here the torch.arange(T, device=device) is enumeration of integers from zero to T-1 to have the positions per token for all time steps 
+        # adding embeddings to pos_encodings
+        X = tok_embeddings + pos_encodings # (B, T, C) 
+  
+        # getting the logits
+        logits = self.lin_layer(X) # (B, T, vocab_size) 
+
+        if targets is None:
+            loss = None
+        else:
+            B, T, C = logits.shape
+            logits = logits.view(B*T, C )
+            targets = targets.view(B*T)
+            loss = F.cross_entropy(logits, targets)
+        return logits, loss
+    
+    # function that generates updated tokens as the new tokens are added per time step, per batch
+    def generate(self, idx, max_new_tokens):
+        # idx is (B, T) array of indices in the current context 
+        for _ in range(max_new_tokens):
+            # cropping the idx to the size until last block_size tokens
+            idx_cond = idx[:, -block_size:] # otherwise we will run out of index/scope in embeddings
+            # predictions
+            logits, loss = self(idx_cond)
+            # limiting to last time step for bigram
+            logits = logits[:, -1, :] # becomes (B, C)
+            # softmax trasnformation 
+            probs = F.softmax(logits, dim=-1) # (B, C)
+            # sampling from generated probabilities for model novelty
+            idx_next = torch.multinomial(probs, num_samples=1) # (B, 1) only single next value selected
+            # appending the sampled index to the sequence
+            idx = torch.cat((idx, idx_next), dim=1) # (B, T+1)
+        return idx
+
+
+
+#-------------------------------------- Estimating Loss ---------------------------------------#
+# less noisy loss: average loss across every X batches
+# making sure PyTorch doesn't store the parameters backwards
+@torch.no_grad()
+def estimate_loss():
+    result = {}
+    # setting model in evaluation state
+    model.eval()
+    for split in ['train', 'valid_date']:
+        losses = torch.zeros(eval_iters)
+        for e in range(eval_iters):
+            X,Y = get_batch(split)
+            logits, loss = model(X,Y)
+            # storing each iterations loss
+            losses[e] = loss.item()
+        result[split] = losses.mean()
+    # setting back to training state
+    model.train()
+    return result
+
+model = BigramLM()
+# moving model paramters to device
+model_device = model.to(device)
+
+#----------------------------- Building PyTorch optimizer using Adam -------------------------------#
+optimizer = torch.optim.AdamW(model.parameters(), lr = lr_rate)
+for iter in range(num_iter):
+    # estimating the loss for per X interval
+    if iter % eval_interval == 0:
+       losses = estimate_loss()
+       print(f"step {iter}: train loss is {losses['train']:.5f} and validation loss is {losses['valid_date']:.5f}")
+    
+    # sampling a mini batch of data
+    xb, yb = get_batch("train")
+
+    # Forward Pass 
+    logits, loss = model(xb, yb)
+    # Zeroing Gradients: Before computing the gradients, existing gradients are reset to zero. This is necessary because gradients accumulate by default in PyTorch.
+    optimizer.zero_grad(set_to_none=True)
+    # Backward Pass or Backpropogation: Computing Gradients
+    loss.backward()
+    # Updating the Model Parameters
+    optimizer.step()
+    #printing the Loss
+
+context = torch.zeros((1, 1), dtype=torch.long, device = device)
+print(decode(model.generate(context, max_new_tokens=500)[0].tolist()))
+
+    
