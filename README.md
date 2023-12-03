@@ -27,6 +27,8 @@ The model's performance is tuned using the following hyperparameters:
 
 These hyperparameters were carefully chosen to balance the model's ability to learn from the data without overfitting and to manage computational resources effectively.
 
+## CPU vs GPU Model Example
+
 
 
 | Hyperparameter   | CPU Model           | GPU Model           |
