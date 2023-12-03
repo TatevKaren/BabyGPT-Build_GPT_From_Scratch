@@ -76,7 +76,8 @@ Mini-batching is a technique in machine learning where the training data is divi
 - Improved Generalization: Mini-batches introduce noise into the training process, which can help the model generalize better to unseen data.
 
 
-``` # Function to create mini-batches for training or validation.
+```python
+# Function to create mini-batches for training or validation.
 def get_batch(split):
     # Select data based on training or validation split.
     data = train_data if split == "train" else valid_data
