@@ -379,7 +379,18 @@ class LayerNorm:
   
 
 ## Step 12: Scaling the Model: NVIDIA CUDA for Using GPU
-- **ScaleUp**: Increasing the complexity of the model by expanding `batch_size`, `block_size`, `d_model`, `d_k`, and `Nx`.
+- **ScaleUp**: Increasing the complexity of the model by expanding `batch_size`, `block_size`, `d_model`, `d_k`, and `Nx`. You will need CUDA toolkit as well as machine with NVIDIA GPU to train and test this bigger model. 
 
-Throughout this project, we ensure that each component added aligns with the underlying principles of the Transformer model architecture. We aim for our Baby GPT to not only understand language patterns but also generate coherent text.
+If you want to try out CUDA for GPU acceleration, ensure that you have the appropriate version of PyTorch installed that supports CUDA. 
+
+```python
+import torch
+torch.cuda.is_available()
+```
+
+You can do this by specifying the CUDA version in your PyTorch installation command, like in command line:
+
+```bash
+pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+```
 
