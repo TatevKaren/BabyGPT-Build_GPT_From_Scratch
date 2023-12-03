@@ -378,8 +378,8 @@ class LayerNorm:
 - FeedForward 
   
 
-## Step 12: Scaling the Model: NVIDIA CUDA for Using GPU
-- **ScaleUp**: Increasing the complexity of the model by expanding `batch_size`, `block_size`, `d_model`, `d_k`, and `Nx`. You will need CUDA toolkit as well as machine with NVIDIA GPU to train and test this bigger model. 
+# Step 12: Scaling the Model: NVIDIA CUDA for Using GPU
+**ScaleUp**: Increasing the complexity of the model by expanding `batch_size`, `block_size`, `d_model`, `d_k`, and `Nx`. You will need CUDA toolkit as well as machine with NVIDIA GPU to train and test this bigger model. 
 
 If you want to try out CUDA for GPU acceleration, ensure that you have the appropriate version of PyTorch installed that supports CUDA. 
 
