@@ -140,14 +140,17 @@ def estimate_loss():
     return result  # Returns the dictionary with the computed losses
 ```
 
+<br>
 
 
-
-## Step 3: Adding Positional Encodings
+# Step 3: Adding Positional Encodings
 - **PosEncoding**: Adding positional information to the model with the `positional_encodings_table` in the `BigramLM` class.
 We add Positional Encodings to the embeddings of our characters as in the transformer architecture.
 
-## Step 4: Incorporating Adam W Optimizer
+<br>
+
+
+# Step 4: Incorporating Adam W Optimizer
 Here we set up and use the AdamW optimizer for training a neural network model in PyTorch. The Adam optimizer is favored in many deep learning scenarios because it combines the advantages of two other extensions of stochastic gradient descent: AdaGrad and RMSProp. Adam computes adaptive learning rates for each parameter. In addition to storing an exponentially decaying average of past squared gradients like RMSProp, Adam also keeps an exponentially decaying average of past gradients, similar to momentum. This enables the optimizer to adjust the learning rate for each weight of the neural network, which can lead to more effective training on complex datasets and architectures.
 
 
@@ -176,10 +179,15 @@ for iter in range(num_iter):
     #printing the Loss
 ```
 
+<br>
 
 
 ## Step 5: Introducing Self-Attention
+- **Dot-Product**
+- **Scaled Dot-Product**
 - **OneHeadSelfAttention**: Incorporating a scaled dot product attention mechanism in the `SelfAttention` class.
+
+<br>
 
 ## Step 6: Transitioning to Multi-Head Self-Attention
 - **MultiHeadAttention**: Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class.
