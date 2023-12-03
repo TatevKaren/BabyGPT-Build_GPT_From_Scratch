@@ -144,7 +144,7 @@ def estimate_loss():
 
 
 # Step 3: Adding Positional Encodings
-- **PosEncoding**: Adding positional information to the model with the `positional_encodings_table` in the `BigramLM` class.
+**Positional Encoding**: Adding positional information to the model with the `positional_encodings_table` in the `BigramLM` class.
 We add Positional Encodings to the embeddings of our characters as in the transformer architecture.
 
 <br>
@@ -332,10 +332,19 @@ class Block(nn.Module):
 
 # Step 9: Adding Residual Connections
 **ResidualConnections**: Enhancing the `Block` class to include residual connections, improving learning efficiency.
+Residual Connections, also known as skip connections, are a critical innovation in the design of deep neural networks, particularly in Transformer models. They address one of the primary challenges in training deep networks: the vanishing gradient problem. 
+
+```python
+    # Adding additional X for Residual Connections
+    def forward(self,X):
+        X = X + self.attention_head(self.ln1(X))
+        X = X + self.feedforward(self.ln2(X))
+        return X
+```
 
 
 # Step 10: Incorporating Layer Normalization
-**LayerNorm**: Normalizing layer outputs with `nn.LayerNorm(d_model)` in the `Block` class.
+**LayerNorm**: Adding Layer Normalization to our Transformer.Normalizing layer outputs with `nn.LayerNorm(d_model)` in the `Block` class.
 
 ```python
 class LayerNorm:
@@ -356,6 +365,8 @@ class LayerNorm:
         return [self.gamma, self.beta]
 
 ```
+
+
 
 ## Step 11: Implementing Dropout
 - **Dropout**: To be added to the `SelfAttention` and `FeedForward` layers as a regularization method to prevent overfitting.
