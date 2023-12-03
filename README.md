@@ -69,6 +69,13 @@ These hyperparameters were carefully chosen to balance the model's ability to le
 - **TrainModel**: Outlines the training procedure using the Adam optimizer and loss estimation.
 
 ## Mini Batch Technique
+Mini-batching is a technique in machine learning where the training data is divided into small batches. Each mini-batch is processed separately during model training. This approach helps in:
+
+- Efficient Use of Memory: By not loading the entire dataset into memory at once, it reduces computational overhead.
+- Faster Convergence: Processing data in batches can lead to faster convergence compared to processing each data point individually.
+- Improved Generalization: Mini-batches introduce noise into the training process, which can help the model generalize better to unseen data.
+
+
 ``` # Function to create mini-batches for training or validation.
 def get_batch(split):
     # Select data based on training or validation split.
@@ -86,6 +93,20 @@ def get_batch(split):
 
     return x, y
 ```
+
+## How to choose your Batch Size?
+
+
+| Factor           | Small Batch Size                                       | Large Batch Size                                   |
+|------------------|--------------------------------------------------------|----------------------------------------------------|
+| **Gradient Noise**       | Higher (more variance in updates)                       | Lower (more consistent updates)                    |
+| **Convergence**          | Tends to explore more solutions, including flatter minima | Often converges to sharper minima                   |
+| **Generalization**       | Potentially better (due to flatter minima)               | Potentially worse (due to sharper minima)           |
+| **Bias**                 | Lower (less likely to overfit to training data patterns) | Higher (may overfit to training data patterns)      |
+| **Variance**             | Higher (due to more exploration in solution space)       | Lower (due to less exploration in solution space)   |
+| **Computational Cost**   | Higher per epoch (more updates)                           | Lower per epoch (fewer updates)                     |
+| **Memory Usage**         | Lower                                                    | Higher                                              |
+
 
 
 ## Step 3: Adding Positional Encodings
