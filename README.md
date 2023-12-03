@@ -241,8 +241,8 @@ The `SelfAttention` class represents a fundamental building block of the Transfo
 
 <br>
 
-## Step 6: Transitioning to Multi-Head Self-Attention
-- **MultiHeadAttention**: Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class. The MultiHeadAttention class is an extended implementation of the self-attention mechanism with one head from previous step, but now multiple attention heads operate in parallel, each focusing on different parts of the input. 
+# Step 6: Transitioning to Multi-Head Self-Attention
+**MultiHeadAttention**: Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class. The MultiHeadAttention class is an extended implementation of the self-attention mechanism with one head from previous step, but now multiple attention heads operate in parallel, each focusing on different parts of the input. 
 - 
 ```python
 
@@ -270,8 +270,8 @@ class MultiHeadAttention(nn.Module):
     
 ```
 
-## Step 7: Adding Feed-Forward Networks
-- **FeedForward**: Implementing feed-forward neural network with ReLU activation within the `FeedForward` class. To add this fully connected feed-forward to our model as in original Transformer Model.
+# Step 7: Adding Feed-Forward Networks
+**FeedForward**: Implementing feed-forward neural network with ReLU activation within the `FeedForward` class. To add this fully connected feed-forward to our model as in original Transformer Model.
   
 ```python
 class FeedForward(nn.Module):
@@ -293,9 +293,9 @@ class FeedForward(nn.Module):
 ```
   
 
-## Step 8: Formulating Blocks (Nx Layer)
-- **TransformerBlocks**: Stacking transformer blocks using the `Block` class to create a deeper network architecture.Depth and Complexity: In neural networks, depth refers to the number of layers through which data is processed. Each additional layer (or block, in the case of Transformers) allows the network to capture more complex and abstract features of the input data.
-- 
+# Step 8: Formulating Blocks (Nx in Model)
+**TransformerBlocks**: Stacking transformer blocks using the `Block` class to create a deeper network architecture.Depth and Complexity: In neural networks, depth refers to the number of layers through which data is processed. Each additional layer (or block, in the case of Transformers) allows the network to capture more complex and abstract features of the input data.
+
 Sequential Processing: Each Transformer block processes the output of its preceding block, gradually building a more sophisticated understanding of the input. This sequential processing allows the network to develop a deep, layered representation of the data.
 Components of a Transformer Block
 
@@ -327,12 +327,35 @@ class Block(nn.Module):
         X = X + self.feedforward(self.ln2(X))
         return X
   ```
+<br>
 
-## Step 9: Adding Residual Connections
-- **ResidualConnections**: Enhancing the `Block` class to include residual connections, improving learning efficiency.
 
-## Step 10: Incorporating Layer Normalization
-- **LayerNorm**: Normalizing layer outputs with `nn.LayerNorm(d_model)` in the `Block` class.
+# Step 9: Adding Residual Connections
+**ResidualConnections**: Enhancing the `Block` class to include residual connections, improving learning efficiency.
+
+
+# Step 10: Incorporating Layer Normalization
+**LayerNorm**: Normalizing layer outputs with `nn.LayerNorm(d_model)` in the `Block` class.
+
+```python
+class LayerNorm:
+    def __init__(self, dim, eps=1e-5):
+        self.eps = eps
+        self.gamma = torch.ones(dim)
+        self.beta = torch.zeros(dim)
+
+    def __call__(self, x):
+        # orward pass calculaton
+        xmean = x.mean(1, keepdim=True)  # layer mean
+        xvar = x.var(1, keepdim=True)  # layer variance
+        xhat = (x - xmean) / torch.sqrt(xvar + self.eps)  # normalize to unit variance
+        self.out = self.gamma * xhat + self.beta      
+        return self.out
+    
+    def parameters(self):
+        return [self.gamma, self.beta]
+
+```
 
 ## Step 11: Implementing Dropout
 - **Dropout**: To be added to the `SelfAttention` and `FeedForward` layers as a regularization method to prevent overfitting.
