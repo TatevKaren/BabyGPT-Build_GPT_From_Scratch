@@ -11,7 +11,7 @@ Baby GPT is an exploratory project designed to incrementally build a GPT-like la
 
 The model's performance is tuned using the following hyperparameters:
 
-- `**batch_size**`: The number of sequences processed in parallel during training
+- `batch_size`: The number of sequences processed in parallel during training
 - `block_size`: The length of the sequences being processed by the model
 - `d_model`: The number of features in the model (the size of the embeddings)
 - `d_k`: The number of features per attention head. 
@@ -24,7 +24,10 @@ The model's performance is tuned using the following hyperparameters:
 - `h`: The number of attention heads in the multi-head attention mechanism
 - `dropout_rate`: The dropout rate used during training to prevent overfitting
 
+
 These hyperparameters were carefully chosen to balance the model's ability to learn from the data without overfitting and to manage computational resources effectively.
+
+
 
 
 
