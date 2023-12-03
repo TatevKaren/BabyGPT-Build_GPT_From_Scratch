@@ -378,7 +378,7 @@ class LayerNorm:
 - FeedForward 
   
 
-## Step 12: Scaling the Model
+## Step 12: Scaling the Model: NVIDIA CUDA for Using GPU
 - **ScaleUp**: Increasing the complexity of the model by expanding `batch_size`, `block_size`, `d_model`, `d_k`, and `Nx`.
 
 Throughout this project, we ensure that each component added aligns with the underlying principles of the Transformer model architecture. We aim for our Baby GPT to not only understand language patterns but also generate coherent text.
