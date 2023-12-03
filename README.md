@@ -35,7 +35,18 @@ Baby GPT is an exploratory project designed to incrementally build a GPT-like la
 ## Step 7: Adding Feed-Forward Networks
 1. **Feed-Forward Layer**: Inclusion of a fully connected feed-forward neural network using the ReLU activation function within a new `FeedForward` class.
 
-## Step 8: Formulating Blocks
-1. **Neural Network Blocks**: Assembling blocks of neural networks that replicate the transformer's blocks by repeating the multi-head self-attention and feed-forward network layers.
+## Step 8: Formulating Blocks (Nx Layer)
+1. **Block Construction**: Designing a class for transformer blocks that can be stacked to form the `NX` layer, which adds depth and parallel processing capabilities to the model.
+2. **Parallelization and Complexity**: Explanation of how stacking multiple transformer blocks (NX) can enhance the model's capacity to learn complex patterns.
+
+## Step 9: Adding Residual Connections
+1. **Introduction to Residual Connections**: Discussing the importance of residual connections in transformer models for facilitating deeper network training without the vanishing gradient problem.
+2. **Implementation in Blocks**: Detailing the implementation of residual connections in both self-attention and feed-forward layers within the blocks to improve learning efficiency and model performance.
+
+## Step 10: Incorporating Layer Normalization
+1. **Understanding Layer Normalization**: Exploring the concept of layer normalization and its contrast with batch normalization in stabilizing the learning process.
+2. **LayerNorm Class**: Creating a `LayerNorm` class with parameters epsilon, gamma, and beta to calculate and apply normalization on a layer-by-layer basis.
+3. **Optimization via Normalization**: Discussing how adding layer normalization at various points in the model aids in optimization by normalizing the output of each layer before it passes to the next.
+
 
 Each of these steps should be accompanied by the relevant code snippets and detailed explanations to provide clarity and guidance on how to implement each part of the model. Further steps will be detailed as the model development progresses.
