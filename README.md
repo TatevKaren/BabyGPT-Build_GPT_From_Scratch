@@ -29,6 +29,22 @@ These hyperparameters were carefully chosen to balance the model's ability to le
 
 
 
+| Hyperparameter   | CPU Model           | GPU Model           |
+|------------------|---------------------|---------------------|
+| `device`         | 'cpu'               | 'cuda' if available, else 'cpu' |
+| `batch_size`     | 16                  | 64                  |
+| `block_size`     | 8                   | 256                 |
+| `num_iter`       | 10000               | 10000               |
+| `eval_interval`  | 500                 | 500                 |
+| `eval_iters`     | 100                 | 200                 |
+| `d_model`        | 16                  | 512                 |
+| `d_k`            | 4                   | 16                  |
+| `Nx`             | 2                   | 6                   |
+| `dropout_rate`   | 0.2                 | 0.2                 |
+| `lr_rate`        | 0.005 (5e-3)        | 0.001 (1e-3)        |
+| `h`              | 2                   | 6                   |
+
+
 
 
 ## Step 1: Data Preparation
