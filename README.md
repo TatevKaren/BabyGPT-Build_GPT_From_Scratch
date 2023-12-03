@@ -294,7 +294,39 @@ class FeedForward(nn.Module):
   
 
 ## Step 8: Formulating Blocks (Nx Layer)
-- **TransformerBlocks**: Stacking transformer blocks using the `Block` class to create a deeper network architecture.
+- **TransformerBlocks**: Stacking transformer blocks using the `Block` class to create a deeper network architecture.Depth and Complexity: In neural networks, depth refers to the number of layers through which data is processed. Each additional layer (or block, in the case of Transformers) allows the network to capture more complex and abstract features of the input data.
+- 
+Sequential Processing: Each Transformer block processes the output of its preceding block, gradually building a more sophisticated understanding of the input. This sequential processing allows the network to develop a deep, layered representation of the data.
+Components of a Transformer Block
+
+- Multi-Head Attention: Central to each block, it processes the input by focusing on different parts of the sequence simultaneously. This parallel processing is key to the model's ability to understand complex data relationships.
+- Feed-Forward Network: It further processes the data after attention, adding another layer of complexity.
+- Residual Connections: They help maintain the flow of information across the network, preventing the loss of input data through layers and aiding in combating the vanishing gradient problem.
+- Layer Normalization: Applied before each major component, it stabilizes the learning process, ensuring smooth training across deep layers.
+
+
+```python
+# ---------------------------------- Blocks ----------------------------------#
+class Block(nn.Module):
+    """Multiple Blocks of Transformer"""
+    def __init__(self, d_model, h):
+        super().__init__()
+        d_k = d_model // h
+        # Layer 4: Adding Attention layer
+        self.attention_head = MultiHeadAttention(h, d_k) # h heads of d_k dimensional self-attention
+        # Layer 5: Feed Forward layer
+        self.feedforward = FeedForward(d_model)
+        # Layer Normalization 1
+        self.ln1 = nn.LayerNorm(d_model)
+        # Layer Normalization 2
+        self.ln2 = nn.LayerNorm(d_model)
+    
+    # Adding additional X for Residual Connections
+    def forward(self,X):
+        X = X + self.attention_head(self.ln1(X))
+        X = X + self.feedforward(self.ln2(X))
+        return X
+  ```
 
 ## Step 9: Adding Residual Connections
 - **ResidualConnections**: Enhancing the `Block` class to include residual connections, improving learning efficiency.
