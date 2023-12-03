@@ -6,6 +6,27 @@ Baby GPT is an exploratory project designed to incrementally build a GPT-like la
 ![Transformer Model Architecture](./GPT%20Series/Images/AttentionIsAllYouNeed.png)
 
 
+## Hyperparameters
+
+
+The model's performance is tuned using the following hyperparameters:
+
+- `**batch_size**`: The number of sequences processed in parallel during training
+- `block_size`: The length of the sequences being processed by the model
+- `d_model`: The number of features in the model (the size of the embeddings)
+- `d_k`: The number of features per attention head. 
+- `num_iter`: The total number of training iterations the model will run
+- `Nx`: The number of transformer blocks, or layers, in the model. 
+- `eval_interval`: The interval at which the model's loss is computed and evaluated
+- `lr_rate`: The learning rate for the Adam optimizer
+- `device`: Automatically set to `'cuda'` if a compatible GPU is available, otherwise defaults to `'cpu'`.
+- `eval_iters`: The number of iterations over which to average the evaluation loss
+- `h`: The number of attention heads in the multi-head attention mechanism
+- `dropout_rate`: The dropout rate used during training to prevent overfitting
+
+These hyperparameters were carefully chosen to balance the model's ability to learn from the data without overfitting and to manage computational resources effectively.
+
+
 
 ## Step 1: Data Preparation
 - **LoadData**: `open('./GPT Series/input.txt', 'r', encoding = 'utf-8')`
