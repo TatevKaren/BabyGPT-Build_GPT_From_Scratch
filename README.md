@@ -33,6 +33,9 @@ These hyperparameters were carefully chosen to balance the model's ability to le
 ## Decoder Only for GPT
 
 
+![GPT Model Architecture](./GPT%20Series/Images/Full_GPT_architecture.png)
+
+
 ## CPU vs GPU Model Example
 
 
