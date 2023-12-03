@@ -256,35 +256,35 @@ class SelfAttention(nn.Module):
 ```
 
 
-
 The `SelfAttention` class represents a fundamental building block of the Transformer model, encapsulating the self-attention mechanism with a single head. Here's an insight into its components and processes:
 
 - **Initialization**: The constructor `__init__(self, d_k)` initializes the linear layers for keys, queries, and values, all with the dimensionality `d_k`. These linear transformations project the input into different subspaces for subsequent attention calculations.
 
 - **Buffers**: `self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))` registers a lower triangular matrix as a persistent buffer that is not considered a model parameter. This matrix is used for masking in the attention mechanism to prevent future positions from being considered in each calculation step (useful in decoder self-attention).
 
-- **Forward Pass**: The `forward(self, X)` method defines the computation performed at every call of the self-attention module:
-  
-  - `B, T, C = X.shape` extracts the batch size (`B`), sequence length (`T`), and channel/feature size (`C`) from the input tensor `X`.
-  
-  - The input `X` is passed through the keys, queries, and values linear layers to produce the respective matrices `K`, `Q`, and `V`.
-  
-  - The scaled dot product attention is calculated by taking the dot product of queries `Q` with keys `K`, scaling by the square root of the feature size to control the gradients' scale.
-  
-  - The `scaled_dot_product` is then masked using the registered lower triangular matrix to ensure the self-attention is only applied to the appropriate sequence positions.
-  
-  - A softmax function is applied to the masked scaled dot product, yielding an attention matrix that represents the probability distribution of attention across different positions.
-  
-  - The final output is computed by multiplying the attention matrix with the values matrix `V`, resulting in a weighted representation of the input that incorporates information from different positions in the sequence based on their computed relevancy.
-
-By understanding each component and its role within the `SelfAttention` class, we gain insight into how self-attention mechanisms contribute to the powerful and flexible modeling capabilities of Transformer-based architectures.
-
+- **Forward Pass**: The `forward(self, X)` method defines the computation performed at every call of the self-attention module
 
 
 <br>
 
 ## Step 6: Transitioning to Multi-Head Self-Attention
 - **MultiHeadAttention**: Combining outputs from multiple `SelfAttention` heads in the `MultiHeadAttention` class.
+- 
+```python
+class MultiHeadAttention(nn.Module):
+    """Multi Head Self Attention"""
+    """h: #heads"""
+    def __init__(self, h, d_k):
+        super().__init__()
+        # initializing the heads, we want h times attention heads wit size d_k
+        self.heads = nn.ModuleList([SelfAttention(d_k) for _ in range(h)])
+    
+    def forward(self, X):
+        # running multiple self attention heads in parallel and concatinate them at channel dimension
+        combined_attentions = torch.cat([h(X) for h in self.heads], dim = -1)
+        return combined_attentions
+    
+```
 
 ## Step 7: Adding Feed-Forward Networks
 - **FeedForward**: Implementing a feed-forward neural network with ReLU activation within the `FeedForward` class.
