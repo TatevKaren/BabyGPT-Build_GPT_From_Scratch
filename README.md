@@ -1,6 +1,6 @@
 # Baby GPT - Simple Language Modeling Project
 
-## Detailed Steps in Model Architecture Building (Decorder Only) GPT
+## Detailed Steps in Model Architecture Building GPT
 Baby GPT is an exploratory project designed to incrementally build a GPT-like language model. The project begins with a simple Bigram Model and gradually incorporates advanced concepts from the Transformer model architecture.
 
 ![Transformer Model Architecture](./GPT%20Series/Images/AttentionIsAllYouNeed.png)
@@ -29,6 +29,9 @@ These hyperparameters were carefully chosen to balance the model's ability to le
 
 <br>
 
+## Data from Kaggle 
+- Shakespeare Data https://huggingface.co/datasets/tiny_shakespeare
+- OpenWebText Data (for larger applications) https://paperswithcode.com/dataset/openwebtext
 
 ## Decoder Only for GPT
 
