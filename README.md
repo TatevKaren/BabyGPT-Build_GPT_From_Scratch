@@ -1,6 +1,6 @@
 # Baby GPT - Simple Language Modeling Project
 
-## Detailed Steps in Model Architecture
+## Detailed Steps in Model Architecture Building (Decorder Only) GPT
 Baby GPT is an exploratory project designed to incrementally build a GPT-like language model. The project begins with a simple Bigram Model and gradually incorporates advanced concepts from the Transformer model architecture.
 
 ![Transformer Model Architecture](./GPT%20Series/Images/AttentionIsAllYouNeed.png)
